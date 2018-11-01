@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Day3</title>
+    <script src="../lib/vue-2.5.17/dist/vue.js"></script>
+    <link rel="stylesheet" href="../lib/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <!-- vue-resource依赖于vue ，注意先后顺序 -->
+    <script src="../lib/vue-resource-1.5.1/dist/vue-resource.js"></script>
+    <link rel="stylesheet" href="../lib/animate.css-3.7.0/animate.css">
+    <style>
+    /* v-enter 【这是一个时间点】是进入前元素的起始状态 */
+    /* v-leave-to  【这是一个时间点】是动画离开之后的终止状态*/
+    /* 入离场动画时间段，关系见Vue */
+    .my-enter-active, .my-leave-active {
+    transition: opacity .5s;
+    }
+    .my-enter，.my-leave-to {
+    opacity: 0;
+    }/* 奇怪的错误，为什么name是my的这段不行 */
+
+    .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+    }
+    .fade-enter, .fade-leave-to {
+    opacity: 0;
+    }
+    .ball{
+        width:15px;
+        height:15px;
+        border-radius: 50%;
+        background-color: red;
+    }
+    li{
+        width: 100%;
+    }
+    li:hover{
+        background-color: gainsboro;
+        transition: all 0.8s ease;
+    }
+    /* v-move 和 v-leave-active配合使用能够实现列表后面元素渐渐飘上去的效果，是固定写法，需要与生命周期函数动画配合使用 */
+    .listAnimate-move{
+        transition: all 0.6s ease;
+    }
+    .listAnimate-leave-active{
+        position: absolute;
+    }
+
+    </style>
+</head>
+<body>
+    <div id="app1">
+        <div class="panel panel-primary">
+              <div class="panel-heading">
+                    <h3 class="panel-title">添加品牌-vue-resource演示</h3>
+              </div>
+              <div class="panel-body form-inline">
+                  <label >Name:
+                      <input type="text" v-model = "name" class="form-control">
+                  </label>
+                  <input type="button" value="添加" @click = "add" class="btn btn-primary">
+                  <label for=""></label>
+              </div>
+        </div>
+        
+        <table class="table table-hover table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Ctime</th>
+                    <th>Operation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for='item in list' :key='item.id'>
+                    <td>{{item.id}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.ctime}}</td>
+                    <td><a href="" @click.prevent="del(item.id)" >删除</a></td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+    <script>
+        //调用时候api前不带斜线，否则不会启用
+    Vue.http.options.root = 'http://root';
+        //启用全局emulateJSON，post数据时不需要再设置该选项
+    Vue.http.options.emulateJSON = true;
+    var vm = new Vue({
+        el:'#app1',
+        data:{
+            name:'',
+            obj:null,
+            list:[
+                {id:1, name:'众泰', ctime:new Date()}
+                ]
+        },
+        methods:{
+            del(id){
+                this.$http.get("api/del?"+id).then(res=>{
+                    if(res.body.status === 0){
+                        this.getAllList();
+                    }else{
+                        alert('del failed')
+                    }
+                    }
+                )},
+            add(){
+                this.$http.post('api/add',{name:this.name})
+                .then(res=>{
+                    if(res.body.status === 0 ){
+                        getAllList();
+                        this.name = '';
+                    }else{
+                        alert('add failed');
+                    }
+                })
+            },
+            getAllList(){//通过api获取所有车品牌列表,例子中的api已经不可用
+                this.$http.jsonp('/api/getprodlist',{credentials:true})
+                .then(successResult =>{
+                    if(successResult.body.status === 0){
+                        this.list = successResult.body.message
+                    }else{
+                        alert('获取数据失败')
+                    }
+                }).catch(e =>{
+                    console.log(e)
+                })
+            }
+        },
+        created(){
+            this.getAllList()
+        }
+    })
+    </script>
+<hr>
+<h3>动画演示</h3>
+<!-- 第一种动画方式：使用过渡类名实现动画   -->
+<!-- 1.使用transition元素，把需要被动画控制的元素包裹起来,transition元素是Vue官方提供的元素 -->
+<!-- 2.自定义两组样式，来控制transition内部的元素实现动画 -->
+<!-- 第二种动画方式：借助于第三方库animate.css实现动画，animate首页有动画样式演示 -->
+<!-- 第三种动画方式：借助于钩子函数实现（动画的生命周期函数） -->
+<div id="app2">
+    
+    <button type="button" class="btn btn-default" @click='flag=!flag'>toggle</button>
+    <transition name="fade">
+        <h3 v-if ="flag">这是一个H3</h3>
+    </transition>
+    <hr>
+    <!-- 必须加基本类animated，或者放到元素上也可以 -->
+    <!-- 使用:duration来统一设置入场和离场的动画时长，单位毫秒值，也可以分开设置 
+        :duration="{enter:200, leave:400}"" -->
+    <transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOut" :duration="400">
+        <h3 v-if ="flag">这是一个借助于第三方animate库的H3</h3> 
+        <!--如果transition不加，则动画元素必须加  <h3 v-if ="flag" class = "animated">这是一个借助于第三方animate库的H3</h3>  -->
+    </transition>
+    <hr>
+    <!-- 钩子函数方式动画 -->
+    <transition 
+    @before-ender="beforeEnter"
+    @enter="enter"
+    @after-enter="afterEnter">
+    <div class="ball" v-show="flag"></div>
+    </transition>
+</div>
+    <script>
+        var vm = new Vue({
+            el:"#app2",
+            data:{
+                flag:false,
+            },
+            methods:{
+                //note:动画钩子函数的第一个参数el表示要执行动画的那个DOM元素，是一个原生的JS DOM对象
+                //可以认为el是通过document.getElementById('')获取到的DOM对象
+                beforeEnter(el){
+                    //表示动画入场之前，此时动画尚未开始，可以在这里设置起始样式
+                    el.style.transform ="translate(0, 0)"
+                },
+                enter(el, done){
+                    //这句话没有实际作用，但如果不写，出不来动画效果；可以认为el.offsetWith会强制动画刷新
+                    el.offsetWidth //top Left都可以
+                    //enter表示动画开始之后的样式，可以设置动画完成的结束状态
+                    el.style.transform ="translate(150px, 150px)"
+                    el.style.transition = 'all 1s ease'
+
+                    //立即执行afterenter, done其实就是afterenter函数，是afterenter函数的引用，需要显示调用
+                    done()
+                },
+                afterEnter(el){
+                    //动画完成之后
+                    //this.flag =!this.flag;
+                    //在下次点击时，动画会重新完成真实生命周期，小球也会从原点重新开始
+                }
+            }
+        })
+    </script>
+    <hr>
+    <!-- 列表动画 -->
+    <!-- 在实现列表过渡的时候，如果需要过渡的元素是通过v-for循环渲染出来的，不能使用transition
+    使用transitionGroup -->
+    <h3>列表动画演示</h3>
+    <div id="app3">
+        <div>
+            <label for=""><span class="label label-default">Id:</span>
+                <input type="text" v-model = "id"  class="form-control">
+            </label>
+            <label for=""><span class="label label-default">Name:</span>
+                <input type="text" v-model = "name" class="form-control">
+            </label>
+            <button type="button" class="btn btn-default" @click = "add">add</button>
+        </div>
+        <!-- 如果为v-for循环创建的元素设置动画，必须为每一个元素设置：key属性 -->
+        <ul class="list-group">
+            <!-- 给transition-group添加appear属性，实现页面刚展示出来时的入场效果 -->
+            <!-- transition-group默认渲染span，不符合w3c规范，把外层ul去掉，通过transition-group的tag="ul"属性，指定将要渲染成的元素 -->
+            <transition-group enter-active-class="animated slideInUp"
+             leave-active-class="animated slideOutUp" :duration="600" 
+             name = "listAnimate" appear tag="div">
+                    <li v-for ="(item,i) in list" :key = "item.id" class= "list-group-item" @click = "del(i)">
+                        {{item.id}}---{{item.name}}
+                    </li>
+            </transition-group>
+        </ul>
+    </div>
+    <script>
+    var vm = new Vue({
+        el:'#app3',
+        data:{
+            id:"",
+            name:"",
+            list:[
+                {id:1,name:"赵高"},
+                {id:2,name:"秦桧"},
+            ]
+        },
+        methods:{
+            add(){
+                this.list.push({id:this.id,name:this.name})
+                this.id = this.name = ""
+            },
+            del(i){
+                this.list.splice(i,1)
+            }
+        }
+    })
+    </script>
+
+
+    <hr>
+    <!-- vue组件使用 -->
+    <!-- 组件的出现时为了拆分vue实例的代码量的，通过不能组件划分不同功能模块，
+        组件和模块化的不同：
+            模块化是从代码逻辑的角度进行划分，方便代码的分层开发，保证每个功能模块的职能单一；
+            组件化是从UI界面的角度进行划分的。方便UI组件的重用。
+     -->
+     <div id="app4">
+    <!--        如果要使用组价，直接把组件的名称，以HTML标签的形式，引入到页面中即可,注意html标签不接收驼峰形式命名 -->
+    <my-com1></my-com1>
+     </div>
+     <script>
+         //1.1 使用Vue.extend来创建全局的Vue组件
+         var com1 = Vue.extend({
+             template:'<h3>这是使用Vue.extend创建的组件</h3>' //通过template属性，指定了组件要展示的HTML结构
+         })
+         //1.2 使用Vue.component("组价名称"，创建出来的组价模板对象com1)
+        //     第一个参数：名称，驼峰或-连接形式，在html中以标签引入
+        //     第二个参数：Vue.extend创建的组件，其中template就是组件将来要展示的内容
+         Vue.component('myCom1', com1 )
+
+     var vm4 = new Vue({
+         el:'#app4',
+     })
+     </script>
+     <!-- 创建组件的第二种形式 -->
+     <div id="app5">
+         <mycom2></mycom2>
+     </div>
+     <script>
+         Vue.component('mycom2',{
+             //组件模板的内容只能有唯一的根元素
+             template:"<h3>这是直接使用Vue.component创建的组件</h3>"
+         })
+     var vm = new Vue({
+         el:'#app5',
+     })
+     </script>
+     <!-- 创建组件的第三种形式 -->
+     <div id="app6">
+        <mycom3></mycom3>
+    </div>
+    <!-- 在被控制的#app外，使用template元素，定义组件的HTML模板结构 -->
+        <template id = "tmpl">
+            <!-- 还是只能有唯一根元素 -->
+            <h3>这是通过template元素，在外部定义的组件结构，这个方式有代码的提示和高亮</h3>
+        </template>
+        <script>
+            Vue.component('mycom3',{
+                //组件模板的内容只能有唯一的根元素
+                template:"#tmpl"
+            })
+        var vm = new Vue({
+            el:'#app6',
+        })
+        </script>
+    <!-- 使用compontents定义私有组件 -->
+    <div id="app7">
+        <login></login>
+    </div>
+    <script>
+    var vm = new Vue({
+        el:'#app7',
+        data:{},
+        methods:{},
+        filters:{},
+        directives:{},
+        //私有组件
+        components:{
+            login:{
+                template:"<h3>这是私有的login组件</h3>"
+            }
+        },
+        //生命周期函数
+        beforeCreate(){},
+        created(){},
+        beforeMount(){},
+        mounted(){},
+        beforeUpdate(){},
+        updated(){},
+        destroyed(){},
+    })
+    </script>
+    <!-- 组件中的data和methods -->
+    <div id="app8">
+        <mycom4></mycom4>
+    </div>
+    <template id = "tmpl1">
+        <h3>这是一个带data的组件的data数据:{{msg}}</h3>
+    </template>
+    <script>
+    var vm = new Vue({
+        el:"#app8",
+        components:{
+            mycom4:{
+                template:"#tmpl1",
+                //组件可以有自己的data数据，但与实例不同
+                //1.组件上的data必须为一个function；2、function内部需要返回一个对象
+                // 组件中的data数据使用方式和实例中data使用方式完全一样
+                data:()=>{
+                    return {
+                        msg:"this is a inner msg"
+                    }
+                }
+            }
+        }
+    })
+    </script>
+
+    <!-- why components data must be a function -->
+    <div id="app9"><counter></counter><counter></counter><counter></counter></div>
+    <template id = "counter-template">
+        <div>
+                <input type="button" value="+1" @click = "add">
+                <h3>{{count}}</h3>
+        </div>
+    </template>
+    
+    <script>
+    var dataObj = {count:0}
+    Vue.component(
+        "counter",{
+                template:"#counter-template",
+                data:()=>{
+                    return dataObj
+                },
+                methods:{
+                    add(){
+                        this.count+=1
+                    }
+                }
+            
+            }    
+    )
+    var vm = new Vue({
+        el:"#app9",
+    })
+    </script>
+    <h3>组件的切换</h3>
+    <!-- 组件的切换方式1：v-if，v-else组件的切换:缺陷，只能有两个切换选项 -->
+    <hr>
+    <div id="app10">
+        <a href="" @click.prevent="flag = false">login</a>
+        <a href="" @click.prevent="flag = true">register</a>
+        <switch-r v-if="flag"></switch-r>
+        <switch-l v-else="flag"></switch-l>
+    </div>
+    <template id = 'template-switch-l'><h3>这是组件login</h3></template>
+    <template id = 'template-switch-r'><h3>这是组件register</h3></template>
+    
+    <script>
+     Vue.component("switch-r",{
+        template:"#template-switch-r"
+    })
+    Vue.component("switch-l",{
+        template:"#template-switch-l"
+    
+    })
+    var vm = new Vue({
+        el:'#app10',
+        data:{
+            flag:true
+        }
+    })
+    </script>
+    <!-- 组件的切换方式2：component -->
+    <hr>
+    <div id="app11">
+            <a href="" @click.prevent="comName = 'login'">login</a>
+            <a href="" @click.prevent="comName = 'register'">register</a>
+        <!-- Vue提供了component元素，来展示对应组件-->
+        <!-- component是一个占位符，:is属性可以指定要展示的组件名称，
+            要在双引号内用单引号包起来，表示这是一个组件的名称，否则就会当一个变量名称解析 -->
+            <!-- 通过mode属性设置组件切换时，动画切换的方式 “in-out” or "out-in"-->
+        <transition enter-active-class="animated fadeIn" leave-active-class="animated fadeOut" mode="out-in">
+            <component :is= "comName"></component>
+        </transition>
+           
+
+    </div>
+    <template id = 'template-switch-l'><h3>这是组件login</h3></template>
+    <template id = 'template-switch-r'><h3>这是组件register</h3></template>
+    <script>
+     Vue.component("register",{
+        template:"#template-switch-r"
+    })
+    Vue.component("login",{
+        template:"#template-switch-l"
+    
+    })
+    var vm = new Vue({
+        el:'#app11',
+        data:{
+            comName:'login'
+        }
+    })
+    </script>
+    <!-- 总结：当前学习了几个Vue提供的标签？？
+        1.component
+        2.template
+        3.transition
+        4.transition-group
+     -->
+     <!-- 组件动画只需要用transition包起来即可 -->
+</body>
+</html>

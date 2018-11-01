@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../lib/vue-2.5.17/dist/vue.js"></script>
+    <style>
+    .red{
+        color: red;
+
+    }
+    .italic{
+        font-style: italic;
+    }
+    </style>
+</head>
+<body>
+    <h1 id = 'app1'>{{ msg+' Dota' }}
+    <!-- v-on指令：事件绑定机制 -->
+    <input type="button" value="按钮" @click.stop ="show2"> 
+    <input type="button" value="自动" @click ="show3"> 
+    <input type="button" value="停止" @click ="stop"> 
+    </h1>
+    <hr>
+    <div id="app2">
+        <p :class="classObj">vue对于行内样式的控制</p>
+    </div>
+    <hr>
+    <div id="app3">
+        <!-- v-for 后跟数组
+             使用唯一字符串或者数字key标记对象，避免重新渲染对象时不能对应对象
+         -->
+        <p v-for="(item,i) in list" :key="i">{{i}}----{{item}}</p>
+        <!-- v-for 后跟对象 -->
+        <p v-for="(value, key, i) in user">{{ value }}+++{{key}} +++{{i}}</p> 
+        <!-- v-for 后跟数字，此时从1开始 -->
+        <p v-for="count in 10 ">{{count}}</p>
+    </div>
+    <!-- 代码 -->
+    <script>
+    var vm = new Vue({
+        el:'#app1',
+        data : {
+            intervalId:null,//定时器ID
+            msg:'1234567890',
+        },
+        methods:{ //定义了所有实例中可用方法
+        show: function() {
+            alert('hello')
+        },
+        show2(){ //es6写法 等同上
+        //注意：在vm实例中，如果想要获取data数据，或者methods中的方法必须使用this来访问
+            var first_char = this.msg.substring(0, 1)
+            var othrers = this.msg.substring(1)
+            this.msg = othrers + first_char 
+        },
+        show3(){
+            if(this.intervalId != null) return; //防止多开定时器
+            this.intervalId = setInterval(() => {
+                //本写法内外this指代相同，否则要注意this指代
+                var first_char = this.msg.substring(0, 1)
+            var othrers = this.msg.substring(1)
+            this.msg = othrers + first_char 
+            },400)
+        },
+        stop(){
+           clearInterval(this.intervalId)
+           this.intervalId = null;
+        },
+        }
+    });
+    var vm2 = new Vue({
+        el:"#app2",
+        data:{
+            classObj:{red:true,italic:true}//属性名可以加引号，也可以不加引号
+        }
+    })
+    var vm3 = new Vue({
+        el:"#app3",
+        data:{
+            list:[1,2,3,4,5],
+            user:{
+                name:'zhang',
+                school:'dut'
+            }
+        }
+    })
+    </script>
+
+</body>
+</html>
+<!--1. v-text
+    2. v-cloak
+    3. v-html
+    4. v-bind 属性绑定 缩写 :
+    5. v-on 事件绑定   缩写 @
+    6. 事件修饰符 //可以串联
+        stop 组织冒泡
+        prevent 阻止默认事件
+        capture 添加事件侦听器时，使用事件捕获模式（与冒泡模式相反，添加在外层）
+        self 只有自身事件才触发，而不是冒泡或捕获；
+        once
+    7. v-if v-show 区别 v-if 有较高切换性能消耗，v-show 有较高初始性能消耗
+ -->

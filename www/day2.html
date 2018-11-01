@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../lib/vue-2.5.17/dist/vue.js"></script>
+    <link rel="stylesheet" href="../lib/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <!-- vue-resource依赖于vue ，注意先后顺序 -->
+    <script src="../lib/vue-resource-1.5.1/dist/vue-resource.js"></script>
+</head>
+<body>
+    <div id="app" class="panel-body form-inline">
+        <p>
+            <label >序号</label>
+            <input type="text" v-model="id" class="form-control">
+            <label >名称</label>
+            <!-- 按键修饰符.enter 可以使用按键的keycode码值,也可使用别名 -->
+            <input type="text" v-model="name" class="form-control" @keyup.f2 = "add">
+            <button @click="add" class="btn btn-primary">添加</button>
+            <label >搜索关键字</label>
+            <!-- 自定义指令v-foucus写法 -->
+            <input type="text" v-model="keywords" class="form-control" v-focus v-color="'blue'"> 
+            <!-- 双引号内单引号表示blue是字符串而不是vue中的变量 -->
+        </p>
+        <table class="table table-striped table-hover table-bordered">
+            <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>time</th>
+                <th>opr</th>
+            </tr>
+            <tr v-for="item in search(keywords)" :key="item.id"> 
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.time | dateFormat('yyyy-mm-dd') }}</td>
+                <td><a href="" @click.prevent="del(item.id)">del</a></td>
+            </tr>
+        </table>
+    <hr>
+    </div>
+    <div id="app2" v-fontweight = '900' v-fontsize = '40'>
+        {{ dt | dateFormat }}
+    </div>
+    <div id="app3"></div>
+    
+    <script>
+    //过滤器
+    Vue.filter("dateFormat",function(dateStr,pattern=""){
+        var dt = new Date(dateStr)
+        //yyyy-mm-dd
+        var y = dt.getFullYear()
+        var m = dt.getMonth()+1 //从0开始，需要加1
+        var d = dt.getDate()
+
+        if(pattern && pattern.toLowerCase() === 'yyyy-mm-dd'){
+            return `${y}-${m}-${d}` //模板字符串,tab上面的键
+        }else{
+            var hh = dt.getHours()
+            var mm = dt.getMinutes()
+            var ss = dt.getSeconds()
+            return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+        }
+    })
+    //自定义全局按键修饰符别名
+    Vue.config.keyCodes.f2 = 113
+
+    //自定义全局指令，参数1 指令名称，在定义时，不需要加v-前缀，但调用时必须加v-前缀调用,
+    //参数2是一个对象，对象身上有指令相关钩子函数，在特定阶段执行相应函数
+    Vue.directive('focus',{
+            //第一个函数永远为el,表示被绑定指令的元素，el是一个原生JS对象
+        bind:function(el){
+            //每当指令绑定到这个元素时，立即执行函数，只执行一次
+        },
+        inserted: function(el){
+            //元素插入到dom中，执行函数
+            //在元素刚绑定了指令时，还没插入到dom中去，bind调用foucs没有作用，只有插入了dom元素才能获取焦点
+            el.focus()
+        },
+        updated:function(el){
+            //当vnode更新时，执行函数，可能触发多次
+        }
+    })
+    //自定义颜色指令
+    Vue.directive("color",{
+        //样式只要绑定了，不管有没有把元素插入页码，这个元素肯定有了一个内联样式
+        //和js相关的在inserted中，和样式相关的在bind中
+        bind:function(el, binding){
+
+            el.style.color = binding.value
+        }
+    })
+
+    var vm = new Vue({
+        el:"#app",
+        data:{
+            id :"",
+            name :"",
+            keywords:"",//搜索关键字
+            list : [
+                {id:0, name:'奔驰', time:Date()},
+                {id:1, name:'宝马', time:Date()}
+            ],
+        },
+        methods:{
+            del(id){
+                var index = this.list.findIndex(item=>{
+                    if(item.id == id)
+                        return true;
+                })
+                this.list.splice(index,1)
+                /*如何使用数组的some方法，item指的是数组中的每一项item，为默认参数
+                 this.list.some((itme,i)=>{
+                    if(item.id == id){
+                       this.list.splice(i,1)
+                       //在数组的some方法中，如果return true就会立即终止循环
+                        return true； 
+                    } 
+                })
+                 */
+
+            },
+            add(){
+                this.list.push({id:this.id,name:this.name,time:Date()})
+                this.id = null
+                this.name = null
+            },
+            search(keywords){
+                var newList = []
+                // 注意 forEach some filter findIndex 这些都属于数组的新方法，都会对数组中的每一项进行遍历，执行相关操作；
+                this.list.forEach(element => {
+                    if(element.name.indexOf(keywords) != -1){
+                        newList.push(element)
+                    }
+                });
+                return newList;
+                
+                /* filter方法
+                return this.list.filter(item =>{
+                    //es6 中为字符串提供了一个新方法， String.prototype.includes("要包含的字符串") 返回 boolean类型
+
+                    if(item.name.includes(keywords)){
+                        return item；
+                    }
+                })
+                 */
+            
+            }
+        }
+    })
+    //过滤器：做输出前最后的处理
+    /* 全局过滤器的调用 */
+    // {{name | 过滤器名称 | 过滤器2 }}
+    /* 全局过滤器的定义 */
+    // Vue.filter("过滤器名称", function(data){})
+    /*  
+        Vue.filter("过滤器名称",function(data){
+        return data
+        }) 
+    */
+    var vm2 = new Vue({
+        el:'#app2',
+        data:{
+            dt: new Date()
+        },
+        methods:{},
+        filters:{ //定义私有过滤器,可以和全局过滤器重名，当重名时，先调用私有，遵循就近原则
+            dateFormat:function(dateStr, pattern=''){
+                var dt = new Date(dateStr)
+                //yyyy-mm-dd
+                var y = dt.getFullYear().toString().padStart(2,0)
+                var m = (dt.getMonth()+1).toString().padStart(2,0) //从0开始，需要加1
+                var d = dt.getDate().toString().padStart(2,0)
+
+                if(pattern && pattern.toLowerCase() === 'yyyy-mm-dd'){
+                    return `${y}-${m}-${d}` //模板字符串,tab上面的键
+                }else{
+                    var hh = dt.getHours().toString().padStart(2,0)
+                    var mm = dt.getMinutes().toString().padStart(2,0)
+                    var ss = dt.getSeconds().toString().padStart(2,0)
+                    //采用es6新特性，padStart(总长度，’填充字符‘),padEnd,来格式化字符串
+                    return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+                } 
+            }
+        },
+        directives:{
+            //自定义私有指令
+            "fontweight":{
+                bind : function(el, binding){
+                    el.style.fontWeight = binding.value
+                }
+            },
+            "fontsize": function(el, binding){//自定义指令简写，等同于吧代码写入bind与pdate中
+                el.style.fontSize = binding.value +'px'
+            }
+           /*  "fontsize":{
+                bind:function(el,binding){
+                    el.style.fontSize = binding.value + 'px'
+                }
+            } */
+        }
+    })
+    /* vue的生命周期 */
+    var vm3 = new Vue({
+        el:'#app3',
+        data:{
+            msg:'ok'
+        },
+        methods:{
+            show(){
+                console.log('执行了show方法')
+            }
+        },
+        beforeCreate(){//遇到的第一个生命周期
+            // console.log(this.msg)
+            // 在beforeCreate生命周期函数执行时，data与methods均未初始化，不能访问
+        },
+        created(){//遇到的第二个生命周期,最早访问methods与data的位置
+            console.log(this.msg)
+        },
+        beforeMount(){//这是第三个生命周期函数，表示模板已经编译完成，但是尚未把模板渲染到页面中，不是变量内容
+            console.log(document.getElementById('app3').innerText)
+        },
+        mounted(){ //这是第4个生命周期函数，将模板替换为真实内容，实例创建周期的最后一个生命周期函数，执行完代表着创建周期的完成
+                //最早能在mounted内操作dom节点
+        },
+        beforeUpdate(){//运行阶段的生命周期函数，只有两个，当data数据改变时触发,最少0次，最多无数次
+            //数据即将更新到dom界面
+        },
+        updated(){//运行阶段的生命周期函数，只有两个
+            //界面dom已经更新
+
+        },
+        beforeDestroy(){//生命周期即将结束的生命周期函数，还没有执行销毁过程，可以用于销毁前的保存
+
+        },
+        destroyed(){//生命周期结束的生命周期函数
+
+        }
+    })
+
+    </script>
+
+    <!-- vue中发起ajax请求（第三方包vue-resource发起get,post,jsonp请求，还可以使用axios 第三方包） -->
+    <!-- vue-resource下载地址 github.com/pagekit/vue-resource -->
+    <!-- 
+        真实测试地址：
+        get请求： http://vue.studyit.io/api/getlunbo
+        post请求： http://vue.studyit.io/api/post
+        jsonp请求： http://vue.studyit.io/api/jsonp
+     -->
+     <hr>
+     <div id="app5">
+         <button value="get请求" @click="getInfo" class="btn btn-primary">get请求</button>
+         <button value="post请求" @click="postInfo" class="btn btn-primary">post请求</button>
+         <button value="jsonp请求" @click="jsonpInfo" class="btn btn-primary">jsonp请求</button>
+     </div>
+    <script>
+    var vm5 = new Vue({
+        el:'#app5',
+        data:{
+
+        },
+        methods:{
+            getInfo(){//发起get请求
+                this.$http.get('http://vue.studyit.io/api/getlunbo').then(function(result){
+                    //通过result.body拿到服务器返回成功数据
+                    console.log(result.body)
+                })//then参数为成功与失败的回调，失败回调可选
+            },
+            postInfo(){//发起post请求 服务器接受的格式为applicaton/x-www-form-urlencoded
+            //手动发起的post默认没有表单格式，有的服务器处理不了,通过post方法的第三个参数，设置提交类型为普通表单数据类型
+                this.$http.post('http://vue.studyit.io/api/post', {}, {emulateJSON: true}).then(result => {
+                    //通过result.body拿到服务器返回成功数据
+                    console.log(result.body)
+                })
+            },
+            jsonpInfo(){
+                /* jsonp避开浏览器安全限制，动态创建script标签，把script的scr指向数据接口地址，只支持get请求 */
+                this.$http.jsonp('http://vue.studyit.io/api/jsonp').then(result => {
+                    console.log(result.body)
+                    //返回结果需要反序列化
+                })
+            },
+        }
+    })
+    </script>
+
+    <hr>
+<!-- 以下为jsonp的原理，客户端定义一个方法的调用，服务端返回一个带数据的方法的调用，从而传递数据 -->
+    <script>
+    function showInfo(data){
+        console.log(data)
+    }
+    </script>
+    <script src="http://127.0.0.1:3000/getscript?callback=showInfo"> //必须加http协议名
+    </script>
+
+
+</body>
+</html>

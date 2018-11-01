@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue-2.5.17/dist/vue.js"></script>
+    <script src="./lib/vue-resource-1.5.1/dist/vue-resource.min.js"></script>
+</head>
+<body>
+    <div id="app1"></div>
+    <script>
+        var vm = new Vue({
+            el:'#app1',
+            methods:{
+                getInfo(){
+                    this.$http.jsonp("http://suggest.taobao.com/sug?code=utf-8&q=iphone",{credentials:true},jsonp = 'cb'
+                    ).then(res=>{
+                        console.log(res.body);
+                    }).catch(e=>{
+                        console.log(e);
+                    })
+                }
+            },
+            created(){
+                this.getInfo();
+            }
+        })
+    </script>
+</body>
+</html>

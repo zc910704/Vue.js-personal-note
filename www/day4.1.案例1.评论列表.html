@@ -1,0 +1,97 @@
+<!-- 通过本地储存，存储所有发表过的评论 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../lib/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <script src="../lib/vue-2.5.17/dist/vue.js"></script>
+</head>
+<body>
+    <div id = 'app'>
+        <cmt-box @func = "loadComments"></cmt-box>
+        <ul class="list-group">
+            <li class="list-group-item" v-for="item in list" :key= "item.id"> 
+                <span class="badge">评论人：{{item.user}}</span>
+                {{item.content}}
+            </li>
+        </ul>
+        
+    </div>
+    
+    <template id="tmpl">
+        <div>
+            <div class="form-group">
+                <label>评论人：</label>
+                <input type="text" name="" id="" class = "form-control" v-model = 'user'>
+            </div>
+            <div class="form-group">
+                    <label>评论内容：</label>
+                    <textarea class = "form-control" v-model='content'></textarea>
+                </div>
+                <div class="form-group">
+                        <button class="btn btn-primary" @click = 'postComment'>发表评论</button>
+                    </div>
+        </div>
+    </template>
+    <script>
+    var commentBox= {
+        template:"#tmpl",
+        data(){
+            return{
+                user:'',
+                content:'',
+            }
+        },
+        methods:{
+            postComment(){
+            //1.明确：评论的数据存储到了localstorage中
+            //2.先组织出一个最新的评论数据对象
+            //3.想办法把第二步中的数据保存到localstorage中
+            // 3.1.localstorage只支持字符串数据，要先调用JSON.stringify
+            // 3.2. 在保存最新的评论数据之前要在localstorage中，获取之前的数据，得到字符串，JSON.parse转换为一个数组对象，把最新的评论push到这个数组
+            // 3.3 如果获取到的localstorage中的数组不存在，则可以返回一个[]
+            // 3.4 把最新的评论列表数组，调用JSON.stringify转换为数组字符串，然后调用localStorage.setItem()存储到本地
+            var comment = {id:Date.now(),user:this.user, content:this.content}
+            var list = JSON.parse(localStorage.getItem('cmts')||"[]")
+            //unshift() 向数组的开头添加一个数据
+            list.unshift(comment)
+            localStorage.setItem('cmts', JSON.stringify(list))
+            this.user = this.content = '' 
+            this.$emit('func')
+        }
+        }
+    }
+    var vm = new Vue({
+        el:'#app',
+        data:{
+            list:[
+                {id:Date.now(), user: '李白', content:"天生我材必有用"},
+                {id:Date.now(), user: '江小白', content:"劝君更尽一杯酒"},
+                {id:Date.now(), user: '小马', content:"我姓马，风吹草低见牛羊的马"},
+            ]
+            },
+        methods:{
+            loadComments(){
+                // 从本地的localStorage加载评论
+                var list =  JSON.parse(localStorage.getItem('cmts')||"[]")
+                this.list = list
+            }
+        },
+        components:{
+            'cmt-box':commentBox
+        },
+         beforeCreate(){
+            //这里不能调用，data 尚未初始化
+        },
+        created(){
+            this.loadComments()
+        }
+        })
+       
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Day4</title>
+    <script src="../lib/vue-2.5.17/dist/vue.js"></script>
+</head>
+<body>
+    <!-- 0.1复习：动画.小球标识符的作用分析 -->
+
+    <!-- 0.2复习：组件的定义方式 -->
+        <!-- var login ={
+            template:"tempate-name",
+            }
+            注意对象属性的简写形式，下例子中，属性和值都是login
+            component({
+                login
+            }
+        注意login不是组件的名字，组件的名字只能通过component注册
+        -->
+    <!-- --------------------------------------------------------------------------- -->
+    <!-- 1.父组件向子组件传值 -->
+    <div id="app">
+        <!-- 我们可以在引用子组件的时候，父组件通过属性绑定的形式(v-bind:)，传递给子组件内 -->
+        <com1 v-bind:parentmsg = "msg"></com1>
+    </div>
+    
+    <script>
+
+    var vm = new Vue({
+        el:'#app',
+        data:{
+            msg:"父组件中的数据"
+        },
+        methods:{},
+        components:{
+            // 默认情况子组件无法访问父组件的data和methods
+            com1:{
+                template:"<h3 @click='change'>1.这是子组件；这是{{parentmsg}}</h3>",
+                //如果需要使用父组件中的数据，子组件除了数据绑定外，还需要在props中重新声明要使用的对象
+                //注意props属性是一个数组，与其他不同,组件中的props的所有数据都是父组件传递过来的
+                //data与props数据的区别：  1.data中的数据是自身私有的；
+                //                       2.data中的数据是可读可写的，props中的数据都是只读的，同react
+                //控制台会报错，不推荐
+                props:['parentmsg'],
+                methods:{
+                    change:function(){
+                        this.parentmsg = '被修改了的数据'
+                    }
+                }
+            },
+        }
+    })
+    </script>
+    <hr>
+    <!-- ---------------------------------------------------------------------------------- -->
+    <!-- 2.子组件调用父组件方法，并向父组件传参 -->
+    <div id="app2">
+        <!-- 父组件向子组件传递方法，使用的是事件绑定机制：v-on简写@，
+            当我们自定义了一个事件属性之后，那么子组件就能通过某些方式来调用传递进去的这个方法 -->
+            <!-- show不带括号 -->
+        <com2 v-on:func = " show "></com2>
+    </div>
+    <template id = "tmpl2">
+        <div>
+            <h3>2.这是子组件</h3>
+            <button @click = "myclick">这是子组件中的按钮，点击它触发父组件传递过来的func方法</button>
+        </div>
+    </template>
+    <script>
+        var com2 ={
+            template:'#tmpl2',
+            data(){
+                return{
+                    sonmsg: { name: '小头儿子', age: 6 }
+                }
+            },
+            methods:{
+                myclick(){
+                    //通过事件绑定与4emit调用父组件中的事件
+                    //emit英文原意代表触发，调用的意思
+                    //从第二个参数可以都可以传参$emit('func',"子组件数据1","子组件数据2"....)
+                    this.$emit('func',this.sonmsg)
+                }
+            }
+        }
+        var vm = new Vue({
+            el:'#app2',
+            data:{
+                dataMsgFromSon:null
+            },
+            methods:{
+                show(data){
+                    // console.log("2.调用了父组件身上的show方法-----" + data)
+                    this.dataMsgFromSon = data
+                }
+            },
+            components:{
+                com2
+            }
+
+        })
+    </script>
+   
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../lib/vue-2.5.17/dist/vue.js"></script>
+    <link rel="stylesheet" href="../lib/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <title>Document</title>
+</head>
+<body>
+        <!-- 同样可以用ref获取vue组件的data与methods -->
+    <div id = 'app'>
+        
+        <button type="button" class="btn btn-default" @click = "getElement">获取元素到consle</button>
+        <h3 ref = 'myh3'>使用ref获取dom元素</h3>
+        <mycom ref ="mycom"></mycom>
+    </div>
+    
+    <script>
+    var vm = new Vue({
+    el:'#app',
+    data:{},
+    methods:{
+        getElement(){
+            console.log(this.$refs.myh3.innerText)
+            console.log(this.$refs.mycom.msg)
+            console.log(this.$refs.mycom.mycommethods())
+    }},
+    components:{
+        mycom:{
+            template:"<h3>我的组件</h3>",
+            data(){
+                return{
+                    msg:"msg in mycom"
+                }
+            },
+            methods:{
+                mycommethods(){
+                    console.log(this.data)
+                }
+            }
+        }
+    }
+    })
+    </script>
+
+</body>
+</html>

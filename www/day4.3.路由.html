@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../lib/vue-2.5.17/dist/vue.js"></script>
+    <script src="../lib/vue-router.js"></script>
+    <style>
+    /*当前选择的router-view，默认是router-link-active */
+    .myactive{
+        color: aqua;
+        font-weight: 50;
+        font-style: italic;
+        font-size: 80px;
+        text-decoration: underline;
+        background-color: rgb(167, 109, 42);
+    }
+    .v-enter,
+    .v-leave-to{
+        opacity: 0;
+        transform: translateX(140px)
+    }
+    .v-enter-active,
+    .-vleave-active{
+        transition: all 0.5s ease;
+    }
+    .header{
+        background-color: aqua;
+        height: 80px;
+    }
+    .container{
+        /* 左右布局的写法 */
+        display: flex;
+        height: 600px;
+        margin: 0;
+        padding: 0;
+    }
+    .left{
+        background-color: pink;
+        flex: 2;
+    }
+    .main{
+        background-color: rgb(196, 192, 255);
+        flex:8;
+    }
+    .h1{
+        margin: 0;
+        padding: 0;
+        font-size: 16px;
+    }
+    html,body{
+        margin: 0;
+        padding: 0;
+    }
+    </style>
+</head>
+<body>
+    <!--#号的作用 www.cnblogs.com/joyho/articles/4430148.html -->
+    <!-- Vue-router文档 https://router.vuejs.org/zh/installation.html -->
+    <!-- 1.导入vue-router包 -->
+    <!-- 2.创建路由对象，当导入完包后，在window全局对象中，就有了一个路由的构造函数，叫做VueRouter -->
+    <!-- 2.1 在new 路由对象的时候，可以为构造函数传递一个配置对象 -->
+    <div id = 'app'>
+        <a href="#/login">登录  </a><a href="#/register">  注册</a>
+        <hr>
+        <!-- router-link是vue-router提供的标签用来渲染生成链接，默认渲染为a标签，可以选择为不同标签 -->
+        <router-link to="/login" tag="span">router-link登录  </router-link>
+        <router-link to = "/register" tag = "span">router-link注册</router-link>
+        <!-- 这是vue-router提供的元素，专门用来当路由规则匹配到的组件的占位符 --> 
+        <transition mode="out-in">
+        <router-view></router-view>
+        </transition>
+    </div>
+    <script>
+        /* 组件的模板对象，组件的名称仅限于在html中以标签形式引用 */
+        var login = {
+            template:"<h3>登录组件</h3>"
+        }
+        var register = {
+            template:"<h3>注册组件</h3>"
+        }
+        var routerObj = new VueRouter({
+            routes:[
+                // 每个路由规则都是一个对象，这个规则对象必须有两个属性
+                // 参数1 是path 表示监听哪个路由链接地址；
+                // 参数2 是component，表示如果路由是前面匹配到的path，这展示component属性对应的那个组件
+                // component的属性值必须是一个组件的模板对象，不能是组件的引用名称；
+                {path:'/',redirect:"login"},//与后端的重定向完全不同
+                {path:'/login',component:login},
+                {path:'/register', component:register}
+            ], //这个配置对象中的routes表示【路由匹配规则】的意思
+            linkActiveClass: "myactive" //对router-view生成的标签的样式进行控制
+        })
+        var vm = new Vue({
+        el:'#app',
+        data:{
+
+        },
+        methods:{
+
+        },
+        components:{
+
+        },
+        //将路由规则对象注册到vm实例上用来监听url地址变化，并展示内容
+        router:routerObj
+        })
+        
+    </script>
+    <hr>
+    <!-- ---------------------------------------------------------------------------------- -->
+    <!-- 2.路由规则中定义并传递参数的方法1：$route.query -->
+    <div id = 'app2'>
+        <!-- 如果在路由中，使用查询字符串给路由传递参数，则不需要修改路由规则中的path属性 -->
+            <router-link to="/login?id=10&name=zs" tag="span">登录  </router-link>
+            <router-link to = "/register" tag = "span">注册</router-link>
+            <transition mode="out-in">
+            <router-view></router-view>
+            </transition>
+        </div>
+        <script>
+            var login = {
+                template:"<h3>登录组件 ID为：{{$route.query.id}}name为：{{$route.query.name}}</h3>",
+                created(){//组件的生命周期函数
+                    //route对象的querry有查询的对象
+                    //console.log(this.$route.query.id)
+
+                }
+            }
+            var register = {
+                template:"<h3>注册组件</h3>"
+            }
+            var router = new VueRouter({
+                routes:[
+                    {path:'/',redirect:"login"},
+                    {path:'/login',component:login},
+                    {path:'/register', component:register}
+                ], 
+                linkActiveClass: "myactive" 
+            })
+            var vm = new Vue({
+            el:'#app2',
+            data:{
+    
+            },
+            methods:{
+    
+            },
+            components:{
+    
+            },
+            router
+            })
+            
+        </script>
+        <hr>
+        <!-- ------------------------------------------------------------------------ -->
+        <!-- 3.路由规则中定义并传递参数的方法2：$route.params -->
+    <div id = 'app3'>
+
+                <router-link to="/login/12/zhang" tag="span">登录  </router-link>
+                <router-link to = "/register" tag = "span">注册</router-link>
+                <transition mode="out-in">
+                <router-view></router-view>
+                </transition>
+            </div>
+            <script>
+                var login = {
+                    template:"<h3>登录组件 id 为：{{$route.params.id}}</h3>",
+                    created(){//组件的生命周期函数
+                        console.log(this.$route.params.id)
+                    }
+                }
+                var register = {
+                    template:"<h3>注册组件</h3>"
+                }
+                var router = new VueRouter({
+                    routes:[
+                    //冒号标识占位符，这个位置的url将当做id解析,匹配的URL必须完整
+                        {path:'/',redirect:"login"},
+                        {path:'/login/:id/:name',component:login},
+                        {path:'/register', component:register}
+                    ], 
+                    linkActiveClass: "myactive" 
+                })
+                var vm = new Vue({
+                el:'#app3',
+                data:{
+        
+                },
+                methods:{
+        
+                },
+                components:{
+        
+                },
+                router
+                })
+            </script>
+            <!-- ---------------------------------------------------------- -->
+            <!-- 4.路由的嵌套 -->
+            <!-- 这段写的有问题 -->
+            <hr>
+            <div id = 'app4'>
+                <router-link to="/account">账户</router-link>
+                <router-view></router-view>
+            </div>
+            <template id = "tmpl3">
+                <div>
+                    <h3>这是account组件</h3>
+                    <router-link to = "/account/login">登录</router-link>
+                    <router-link to = "/account/register">注册</router-link>
+                </div>
+            </template>
+            <script>
+                var account3 = { 
+                    template:"#tmpl3"
+                }
+                var login3 = {
+                    template:"<h3>登录</h3>"
+                }
+                var register3 = {
+                    template:"<h3>注册</h3>"
+                }
+                var router3 = new VueRouter({
+                    routes: [
+                        {path:"/account",
+                         component: account3,
+                         children:[
+                             //注意子路由的写法，使用children属性实现子路由，children与component平级
+                             //注意：前不能加/！！！！,加/表示以根路径开始匹配
+                             {path:"login", component: login3},
+                             {path:"register", component: register3}
+                         ]
+                        },
+                    ]
+                })
+                var vm = new Vue({
+                    el:'#app4',
+                    data:{},
+                    methods:{},
+                    router: router3
+                })
+            </script>
+            <!-- ----------------------------------------------------------------- -->
+            <!-- 5.路由命名视图实现经典布局 -->
+            <div id = 'app5'>
+                <router-view ></router-view>
+                <div class="container">
+                    <router-view name ="left"></router-view>
+                    <router-view name ="main"></router-view>
+                </div>
+                
+            </div>
+            <script>
+                var header = {
+                    template:"<h1 class = 'header'>这是header</h1>"
+                }
+                var leftBox = {
+                    template:"<h1 class = 'left'>这是left</h1>"
+                }
+                var mainBox = {
+                    template:"<h1 class = 'main'>这是主体</h1>"
+                }
+                var router5 = new VueRouter({
+                    routes : [
+                        { path:"/main", components: { //components的值为对象
+                            'default': header,
+                            'left':leftBox,
+                            'main':mainBox
+                        } },
+                    ]
+                })
+                var vm = new Vue({
+                    el:'#app5',
+                    data:{},
+                    methods:{},
+                    router:router5
+                })
+            </script>
+            
+            
+</body>
+</html>

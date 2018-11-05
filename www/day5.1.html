@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../lib/vue-2.5.17/dist/vue.js"></script>
+</head>
+<body>
+    <!-- 1.名称案例：keyup事件的监听 -->
+    <div id = 'app1'>
+        <h3>使用keyup事件监听的名称案例</h3>
+        <input type="text" v-model="firstname"@keyup="getFullName">+
+        <input type="text" v-model="lastname" @keyup="getFullName">=
+        <input type="text" v-model="fullname" @keyup="getFullName">
+    </div>
+    <script>
+        var vm = new Vue({
+            el:'#app1',
+            data:{
+                firstname: "",
+                lastname:  "",
+                fullname:  "",
+            },
+            methods:{
+                getFullName(){
+                    this.fullname = this.firstname + " " + this.lastname
+                }
+            },
+        })
+    </script>
+    <hr>
+    <!-- 2.名称案例：使用watch的监听 -->
+    <div id = 'app2'>
+            <h3>使用watch监听的名称案例</h3>
+            <input type="text" v-model="firstname">+
+            <input type="text" v-model="lastname" >=
+            <input type="text" v-model="fullname" >
+        </div>
+        <script>
+            var vm = new Vue({
+                el:'#app2',
+                data:{
+                    firstname: "",
+                    lastname:  "",
+                    fullname:  "",
+                },
+                methods:{
+                },
+                watch:{//使用这个属性可以监视data中指定数据的变化，然后触发watch中对应function的处理函数
+                    firstname:function(){//注意：当firstname中间有-时（即：first-name），必须加引号，否则可不加
+                        this.fullname = this.firstname + " " + this.lastname
+                    },
+                    lastname:function(newVal, oldVal){//oldVal可省略
+                        this.fullname = this.firstname + " " + newVal
+                    }, 
+                    /* lastname(){
+                        this.fullname = this.firstname + " " + this.lastname
+                    } */
+                    /* watch属性的相比之前的例子可以监视组件路由的变化 */
+                }
+            })
+        </script>
+        <hr>
+        <!-- 3.watch监视路由地址的改变 -->
+    
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../lib/vue-2.5.17/dist/vue.js"></script>
+    <script src="../lib/vue-router.js"></script>
+</head>
+
+<body>
+    <!-- 1.名称案例：keyup事件的监听 -->
+    <div id='app1'>
+        <h3>1.使用keyup事件监听的名称案例</h3>
+        <input type="text" v-model="firstname" @keyup="getFullName">+
+        <input type="text" v-model="lastname" @keyup="getFullName">=
+        <input type="text" v-model="fullname" @keyup="getFullName">
+    </div>
+    <script>
+        var vm = new Vue({
+            el:'#app1',
+            data:{
+                firstname: "",
+                lastname:  "",
+                fullname:  "",
+            },
+            methods:{
+                getFullName(){
+                    this.fullname = this.firstname + " " + this.lastname
+                }
+            },
+        })
+    </script>
+    <hr>
+    <!-- 2.名称案例：使用watch的监听 -->
+    <div id='app2'>
+        <h3>2.使用watch监听的名称案例</h3>
+        <input type="text" v-model="firstname">+
+        <input type="text" v-model="lastname">=
+        <input type="text" v-model="fullname">
+    </div>
+    <script>
+        var vm = new Vue({
+                el:'#app2',
+                data:{
+                    firstname: "",
+                    lastname:  "",
+                    fullname:  "",
+                },
+                methods:{
+                },
+                watch:{//使用这个属性可以监视data中指定数据的变化，然后触发watch中对应function的处理函数
+                    firstname:function(){//注意：当firstname中间有-时（即：first-name），必须加引号，否则可不加
+                        this.fullname = this.firstname + " " + this.lastname
+                    },
+                    lastname:function(newVal, oldVal){//oldVal可省略
+                        this.fullname = this.firstname + " " + newVal
+                    }, 
+                    /* lastname(){
+                        this.fullname = this.firstname + " " + this.lastname
+                    } */
+                    /* watch属性的相比之前的例子可以监视组件路由的变化 */
+                }
+            })
+        </script>
+    <hr>
+    <!-- 3.watch监视路由地址的改变 -->
+    <!-- watch能方便的监听非DOM元素的改变 -->
+    <div id='app3'>
+        <h3>3.watch监视路由地址的改变</h3>
+        <router-link to="/login" tag="span">登录 </router-link>
+        <router-link to="/register" tag="span">注册</router-link>
+        <router-view></router-view>
+    </div>
+
+    <script>
+        var login = {
+                template:"<h3>登录组件</h3>"
+            }
+            var register = {
+                template:"<h3>注册组件</h3>"
+            }
+            var router = new VueRouter({
+                routes: [
+                    {path:'/',redirect:'/login'},
+                    {path:'/login', component:login },
+                    {path:'/register', component:register}
+                ],
+                linkActiveClass: 'myactive'
+
+            })
+        var vm = new Vue({
+            el:'#app3',
+            data:{},
+            methods:{},
+            router,
+            watch:{
+                //this.$route.path
+                '$route.path':function(newVal, oldVal){
+                    console.log(newVal+ " ----- "+oldVal)
+                    if(newVal === '/login'){
+                        console.log('欢迎进入登录页面')
+                    }
+                }
+            }
+        })
+        </script>
+    <hr>
+    <!-- 4.名称案例方式3 -->
+    <div id='app4'>
+        <h3>4.名称案例方式3：计算属性与他的三个特点</h3>
+        <input type="text" v-model="firstname">+
+        <input type="text" v-model="lastname">=
+        <input type="text" v-model="fullname">
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app4',
+            data: {
+                firstname: "",
+                lastname: ""
+            },
+            methods: {},
+            watch: {},
+            computed: { //在computed中，可以定义一些属性，这些属性叫做计算属性，计算属性的本质就是一个方法
+                //当我们使用这些计算属性时，是把他们的名称，直接当做属性来使用，并不会把计算属性当做方法使用
+               //注意： 1.计算属性在引用时，一定不要加（），当做普通属性使用
+               //      2.只要计算属性中用到的任何data中的数据发生了变化，就会立即重新计算
+               //      3.计算属性的求值结果，会被缓存起来，方便下次直接使用，如果计算属性方法中所依赖的任何数据都没有发生变化，则下次引用不会重新计算。
+               'fullname':function(){
+                   return this.firstname+ " " + this.lastname
+               }
+            }
+        })
+    </script>
+    <!-- methods watch computed 三者异同 -->
+    <hr>
+</body>
+
+</html>

@@ -2,15 +2,15 @@
 webpack文档地址：[https://www.webpackjs.com/concepts/](https://www.webpackjs.com/concepts/)
 ##网页中常见的静态资源
 + JS
- - .js jsx .coffee .ts (TypeScript 类似C#语言)
+	- .js jsx .coffee .ts (TypeScript 类似C#语言)
 + CSS
-- .css .less .sass .scss
+	- .css .less .sass .scss
 + Images
-- .jpg .png .gif .bmp .svg
+	- .jpg .png .gif .bmp .svg
 + Fonts
-- .svg .ttf .eot .woff .woff2
+	- .svg .ttf .eot .woff .woff2
 + 模板文件
-- .ejs .jade .vue 【这是在webpack中定义组件的方式，推荐这么用】
+	- .ejs .jade .vue 【这是在webpack中定义组件的方式，推荐这么用】
 
 ##导致的问题
 1.网页加载速度慢，因为需要二次请求；

@@ -1,6 +1,6 @@
 # Vue.js-Day5-webpack
 webpack文档地址：[https://www.webpackjs.com/concepts/](https://www.webpackjs.com/concepts/)
-##网页中常见的静态资源
+## 网页中常见的静态资源
 + JS
 	- .js jsx .coffee .ts (TypeScript 类似C#语言)
 + CSS
@@ -12,29 +12,29 @@ webpack文档地址：[https://www.webpackjs.com/concepts/](https://www.webpackj
 + 模板文件
 	- .ejs .jade .vue 【这是在webpack中定义组件的方式，推荐这么用】
 
-##导致的问题
+## 导致的问题
 
 1.网页加载速度慢，因为需要二次请求；
 
 2.要处理复杂的依赖关系
 
-##解决方案
+## 解决方案
 
 1.合并、压缩、精灵图、图片的Base64编码 => 处理第一个问题
 
 2.requireJS 或 webpack解决复杂依赖关系
 
-##什么是webpack
+## 什么是webpack
 
 前端项目构建工具，基于Node.js开发
 
-##如何完美实现上述两种解决方案
+## 如何完美实现上述两种解决方案
 
 1.使用Gulp，是基于task任务的。
 
 2.使用webpack，是基于整个项目进行构建的。
 
-##webpack两种安装方式
+## webpack两种安装方式
 
 1. npm i webpack -g 全局安装
 
@@ -50,7 +50,7 @@ Please install 'webpack-cli' in addition to webpack itself to use the CLI
 
  按照错误提示，执行`npm i webpack-cli -D`,既可以解决。
 
-##列表隔行颜色不同的webpack例子
+## 列表隔行颜色不同的webpack例子
 
 1.建立了目录结构后，使用npm安装jQuery：` npm init -y` 然后`npm i jquery -S`
 
@@ -87,6 +87,6 @@ bundle.js黄色代表体积过大，可能需要压缩与混淆。
 
 - 命令格式： `webpack 要打包的文件路径 -o 打包好的输出文件路径`注意：与老师的例子不一样
 
-##webpack.config.js文件的使用
+## webpack.config.js文件的使用
 
 参考webpack首页填写；

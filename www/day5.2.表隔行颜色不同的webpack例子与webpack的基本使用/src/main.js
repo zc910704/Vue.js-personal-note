@@ -5,6 +5,8 @@
 import $ from 'jquery' //从Node_modules导入jquery这个包，用$来接收
 //等于node中const $ = require("jquery") //浏览器也不支持require语言
 
+//使用import语法，导入css样式表，与js区别
+import './css/index.css'
 
 //入口函数
 $(function(){

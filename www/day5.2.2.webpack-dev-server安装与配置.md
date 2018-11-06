@@ -28,7 +28,7 @@
 添加在package.json中`"dev": "webpack-dev-server"`中的webpack-dev-server 后面。
 
 - `--open` 自动打开浏览器
-- `--port 80` 指定端口
+- `--port 8000` 指定端口
 - `--contentBase src` 内容的根路径
 - `--hot` 热重载热更新（不重新生成bundle.js，只生成补丁代码），实现浏览器不刷新重载（否则会页面整体刷新）
 

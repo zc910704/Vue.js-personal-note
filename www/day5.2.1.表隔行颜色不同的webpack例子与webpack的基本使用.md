@@ -90,3 +90,5 @@ bundle.js黄色代表体积过大，可能需要压缩与混淆。
 ## webpack.config.js文件的使用
 
 参考webpack首页填写；
+
+根据提示设置`mode:'development'`

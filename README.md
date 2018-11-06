@@ -9,6 +9,7 @@ https://www.bilibili.com/video/av27969216/
 - Day3：Vue获取api数据，动画、组件,、组件动画。
 - Day4：Vue组件传值,，VueRouter路由，包括路由标签，路由动画，路由两种传参，路由嵌套；
 - Day5：复习父子组件传值，基本路由使用，名称案例，webpack;
+- Day6：webpack中url-loader、babel、Vue结合使用；
 
 需要的知识：
 - [npm的使用](https://segmentfault.com/a/1190000007683367)

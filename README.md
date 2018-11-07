@@ -2,7 +2,11 @@
 
 课程地址：
 https://www.bilibili.com/video/av29192186/ （不全缺最后一天）
+
 https://www.bilibili.com/video/av27969216/
+
+官网地址：http://yun.itheima.com/course/335.html
+
 
 - Day1：Vue基础部分。
 - Day2：Vue过滤器、自定义按键修饰符、自定义指令、生命周期函数，Vue-resource使用。

@@ -1,0 +1,11 @@
+.box{
+    height: 100px;
+    width: 100px;
+    background-color: cyan;
+}
+body{
+    /* background-color: rgb(104, 77, 226); */
+    background: url('../images/hana.jpg');
+    background-size: cover;
+    
+}

@@ -9,7 +9,11 @@ import goodslist from './main/GoodsList.vue'
 var router = new VueRouter({
     routes: [{
             path: '/account',
-            component: account
+            component: account,
+            children:[
+                {path:'login',component:login},
+                {path:'register',component:register},
+            ]
         },
         {
             path: '/goodslist',
@@ -17,9 +21,20 @@ var router = new VueRouter({
         }
     ]
 })
-
+/* 路由使用 */
 var vm = new Vue({
     el: '#app',
+    render: c => c(app),
+    router
+})
+import login from './subRouter/login.vue'
+import register from './subRouter/register.vue'
+
+
+/* 路由嵌套 */
+
+var vm = new Vue({
+    el: '#app2',
     render: c => c(app),
     router
 })

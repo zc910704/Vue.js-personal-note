@@ -1,10 +1,10 @@
-`` # Babel安装与说明
+# Babel安装与说明
 
 在webpack中只能处理一部分ES6语法，一些更高级的ES6或ES7语法不能处理，这是就需要第三方的loader来处理这些语法。
 
 通过Babel，可以帮我们完成这一转换。
 
-# 安装
+## 安装
 
 + 在webpack，通过运行如下两套命令，安装两套包，安装Babel相应的loader功能；
 
@@ -38,3 +38,15 @@
 + 上述安装的各包中，实测去除babel-plugin-transform-runtime的引用不会报错，但babel-preset-stage-0必须安装配置，否则一定报错。
 
 + 具体见babel-loader的[GitHub主页](https://github.com/babel/babel-loader)
+
+## 几点说明
+
++ 第一套包：`npm i babel-core babel-loader babel-plugin-transform-runtime -D` 第一套包为babel的转换工具
+
++  第二套包：`npm i babel-preset-env babel-preset-stage-0 -D`第二套包为babel的语法
+
++  第一套包只负责转换，是转换器，但不知道对应关系
+
++  第二套包只负责对应关系
+
++ babel-preset-env是比较新的ES语法插件，之前我们安装的是babel-preset-se2015，但我们安装的这个babel-preset-env包含了所有ES相关的语法。

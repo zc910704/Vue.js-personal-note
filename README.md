@@ -25,7 +25,7 @@ https://www.bilibili.com/video/av27969216/
     - Vetur
     - Vue 2 Snippets
 
-- 推荐使用火狐浏览器安装vue-dev插件调试代码，免翻墙。
+- 推荐使用火狐浏览器安装Vue.js devtools插件调试代码，免翻墙。
 
 
 有问题的地方欢迎提出

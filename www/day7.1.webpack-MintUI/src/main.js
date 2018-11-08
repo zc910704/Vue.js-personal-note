@@ -1,38 +1,22 @@
+//mint-ui使用
 import Vue from 'vue'
 import app from './app.vue'
-import VueRouter from 'vue-router'
-Vue.use(VueRouter) 
+// import mint from 'mint-ui'//全局导入
+// import 'mint-ui/lib/style.css'
+// Vue.use(mint)
+// 按需导入方式如下
 
-import account from './main/Account.vue'
-import goodslist from './main/GoodsList.vue'
+import { Button } from 'mint-ui'
+// Vue.component('mybtn',Button)
+Vue.component(Button.name,Button)
+console.log(Button.name)
 
-var router = new VueRouter({
-    routes: [{
-            path: '/account',
-            component: account,
-            children:[
-                {path:'login',component:login},
-                {path:'register',component:register},
-            ]
-        },
-        {
-            path: '/goodslist',
-            component: goodslist
-        }
-    ]
-})
+import 'bootstrap/dist/css/bootstrap.css'
+
+
+//注意mint-UI的css组件和js组件导入的方式不同
 
 var vm = new Vue({
     el: '#app',
     render: c => c(app),
-    router
-})
-import login from './subRouter/login.vue'
-import register from './subRouter/register.vue'
-
-
-var vm = new Vue({
-    el: '#app2',
-    render: c => c(app),
-    router
 })

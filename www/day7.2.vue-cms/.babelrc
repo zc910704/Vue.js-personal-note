@@ -1,0 +1,12 @@
+{
+    "presets": ["env", "stage-0"],
+    "plugins": ["transform-runtime", ["component",
+        [{
+                "libraryName": "mint-ui",
+                "style": true
+            }
+
+        ]
+    ]
+]
+}

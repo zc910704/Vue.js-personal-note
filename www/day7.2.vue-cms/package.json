@@ -1,0 +1,39 @@
+{
+  "name": "day6.2.webpack-Vue",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server --open --contentBase --hot"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-component": "^1.1.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "css-loader": "^1.0.1",
+    "file-loader": "^2.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "i": "^0.3.6",
+    "npm": "^6.4.1",
+    "style-loader": "^0.23.1",
+    "url-loader": "^1.1.2",
+    "vue-loader": "^15.4.2",
+    "vue-router": "^3.0.1",
+    "vue-template-compiler": "^2.5.17",
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "mint-ui": "^2.2.13",
+    "vue": "^2.5.17"
+  }
+}

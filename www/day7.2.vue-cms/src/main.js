@@ -13,6 +13,9 @@ import './lib/mui-3.7.1/dist/css/mui.min.css'
 import './css/icons-extra.css'
 import './fonts/mui-icons-extra.ttf'
 
+import VueResource from 'vue-resource'
+Vue.use(VueResource)
+
 import app from './App.vue'
 import router from './router'
 

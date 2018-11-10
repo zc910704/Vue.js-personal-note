@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- 用来测试接口的是否可用的快速模板 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -19,7 +20,7 @@
             el:'#app1',
             methods:{
                 getInfo(){
-                    this.$http.jsonp("http://suggest.taobao.com/sug?code=utf-8&q=iphone",{credentials:true},jsonp = 'cb'
+                    this.$http.jsonp("http://bing.ioliu.cn/v1"//,{credentials:true}, jsonp = 'callback'
                     ).then(res=>{
                         console.log(res.body);
                     }).catch(e=>{

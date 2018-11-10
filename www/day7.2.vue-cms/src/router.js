@@ -6,7 +6,12 @@ import cart from './components/CartContainer.vue'
 import search from './components/SearchContainer.vue'
 
 var router = new VueRouter({
-    routes: [{
+    routes: [
+        {
+            path:'/',
+            redirect:'/home'
+        },
+        {
             path: '/home',
             component: home
         },

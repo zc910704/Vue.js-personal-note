@@ -114,4 +114,6 @@ return getFileByPath(path3)
 console.log(err.message)
 })
 ```
++ resolve和reject只会执行一个，如果在promise构造时内部没有定义，则都不会执行
 
+[在线流程图与测试](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)

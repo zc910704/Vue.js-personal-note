@@ -25,6 +25,7 @@ https://www.bilibili.com/video/av27969216/
     - View In Browser
     - Vetur
     - Vue 2 Snippets
+    - Path Autocomplete（提示路径）
     - [其他未提到的插件](https://github.com/varHarrie/varharrie.github.io/issues/10)
 
 - 推荐使用火狐浏览器安装Vue.js devtools插件调试代码，免翻墙。
